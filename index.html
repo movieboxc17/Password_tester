@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Strength Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f7f7f7;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+        }
+
+        #passwordInput {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #passwordStrength {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #hackButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #hackButton:hover {
+            background-color: #45a049;
+        }
+
+        #hackerResult {
+            color: red;
+            margin-top: 10px;
+        }
+
+        #warning {
+            color: #FF5733;
+            font-size: 16px;
+            margin-top: 30px;
+        }
+
+        #messageBox {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Password Strength Tester</h1>
+    <p>Enter a password to check its strength:</p>
+    <input type="password" id="passwordInput" oninput="checkPasswordStrength()">
+    <p id="passwordStrength"></p>
+
+    <button id="hackButton" onclick="hackPassword()">Hack</button>
+    <p id="hackerResult"></p>
+
+    <div id="warning">
+        Warning ⚠️ this password tester is in beta v 1.0
+    </div>
+
+    <div id="messageBox">
+        <p id="messageText"></p>
+        <button onclick="closeMessageBox()">Close</button>
+    </div>
+
+    <script>
+        function checkPasswordStrength() {
+            const password = document.getElementById("passwordInput").value;
+            const strengthMeter = document.getElementById("passwordStrength");
+
+            if (password.length === 0) {
+                strengthMeter.textContent = "";
+                return;
+            }
+
+            let strength = 0;
+
+            if (password.length >= 8) {
+                strength++;
+            }
+
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+                strength++;
+            }
+
+            if (/\d/.test(password)) {
+                strength++;
+            }
+
+            if (/[!@#$%^&*]/.test(password)) {
+                strength++;
+            }
+
+            switch (strength) {
+                case 0:
+                    strengthMeter.textContent = "Weak";
+                    break;
+                case 1:
+                    strengthMeter.textContent = "Moderate";
+                    break;
+                case 2:
+                    strengthMeter.textContent = "Strong";
+                    break;
+                case 3:
+                case 4:
+                    strengthMeter.textContent = "Very Strong";
+                    break;
+            }
+        }
+
+        function hackPassword() {
+            const password = document.getElementById("passwordInput").value;
+            const hackerResult = document.getElementById("hackerResult");
+
+            let hacked = false;
+            let attempts = 0;
+
+            while (!hacked) {
+                const randomPassword = generateRandomPassword(password.length);
+                attempts++;
+
+                if (randomPassword === password) {
+                    hacked = true;
+                }
+            }
+
+            const messageBox = document.getElementById("messageBox");
+            const messageText = document.getElementById("messageText");
+            messageText.textContent = `Hacker successfully guessed the password in ${attempts} attempts.`;
+            messageBox.style.display = "block";
+        }
+
+        function closeMessageBox() {
+            const messageBox = document.getElementById("messageBox");
+            messageBox.style.display = "none";
+        }
+
+        function generateRandomPassword(length) {
+            const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let randomPassword = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                randomPassword += characters.charAt(randomIndex);
+            }
+            return randomPassword;
+        }
+    </script>
+</body>
+</html>
